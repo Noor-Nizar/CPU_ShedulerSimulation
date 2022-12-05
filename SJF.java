@@ -29,13 +29,12 @@ public class SJF {
                 }
             }
         }
-        int counter = 0;    //represents Time
-        int jBest = -1;     //the best process to run that has arrived so far
-        int jnout = -1;     //the process tht is arriving next
-        boolean work = true;    //loop exit condition
-        int First = -1;         //if not -1 then there are still processes to run
-        int dbg = 5;        //debug counter
-        while (work) {
+        int counter = 0; // represents Time
+        int dbg = 5; // debug counter
+        while (true) {
+            int jBest = -1; // the best process to run that has arrived so far
+            int jnout = -1; // the process tht is arriving next
+            int First = -1; // if not -1 then there are still processes to run
             for (int j = 0; j < tPD.size(); j++) {
                 if (tPD.get(j).getBurstTime() == 0) {
                     continue;
@@ -61,7 +60,6 @@ public class SJF {
 
             }
             if (First == -1) {
-                work = false;
                 break;
             }
             if (jBest == -1) {
@@ -78,7 +76,7 @@ public class SJF {
                 counter += maxgw;
             } else {
                 int maxgw = tPD.get(jBest).getBurstTime();
-                Pair tmp = new Pair(tPD.get(jBest), counter + maxgw); // meed to account for wait time start time
+                Pair tmp = new Pair(tPD.get(jBest), counter + maxgw);
                 retP.add(tmp);
                 tPD.get(jBest).setBurstTime(tPD.get(jBest).getBurstTime() - maxgw);
                 counter += maxgw;
@@ -90,12 +88,8 @@ public class SJF {
             // System.out.println("--------------------");
             // prog.PDprinter(tPD);
             // System.out.println("--------------------");
-            jBest = -1;
-            First = -1;
-            jnout = -1;
-
         }
- 
+
         return retP;
 
     }
