@@ -34,7 +34,7 @@ public class prog {
         ///SJF
         SJF sjf = new SJF();
         RR rr = new RR();
-        ArrayList<Pair<Process, Integer>> sjfP = sjf.Sort(PD);
+        ArrayList<Pair<Process, Integer>> sjfP = sjf.Sort(PD, ContextSwitch);
         // Queue<Pair> sjfP = rr.run(PD, RRTQ, ContextSwitch);
         System.out.println("SJF");
         for (int i = 0; i < sjfP.size(); i++) {

@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class SJF {
 
-    public ArrayList<Pair<Process, Integer>> Sort(ArrayList<Process> PD) {
+    public ArrayList<Pair<Process, Integer>> Sort(ArrayList<Process> PD, int ContextSwitch) {
         // deep copy PD into tPD
         ArrayList<Pair<Process, Integer>> retP = new ArrayList<Pair<Process, Integer>>();
         ArrayList<Process> tPD = new ArrayList<Process>();
@@ -63,6 +63,7 @@ public class SJF {
                 break;
             }
             if (jBest == -1) {
+                retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), tPD.get(jnout).getArrivalTime()));
                 counter = tPD.get(First).getArrivalTime();
                 continue;
             }
@@ -81,6 +82,9 @@ public class SJF {
                 tPD.get(jBest).setBurstTime(tPD.get(jBest).getBurstTime() - maxgw);
                 counter += maxgw;
             }
+            //context switching
+            retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter + ContextSwitch));
+            counter += ContextSwitch;
             // }
             // System.out.println("counter: " + counter);
             // System.out.println("First: " + First);
