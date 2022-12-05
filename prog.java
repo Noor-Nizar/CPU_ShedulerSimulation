@@ -34,11 +34,11 @@ public class prog {
         ///SJF
         SJF sjf = new SJF();
         RR rr = new RR();
-        ArrayList<Pair> sjfP = sjf.Sort(PD);
+        ArrayList<Pair<Process, Integer>> sjfP = sjf.Sort(PD);
         // Queue<Pair> sjfP = rr.run(PD, RRTQ, ContextSwitch);
         System.out.println("SJF");
         for (int i = 0; i < sjfP.size(); i++) {
-            System.out.println("Process Number: " + sjfP.get(i).getProcess().getNumber() + " End Time: " + sjfP.get(i).getTime());
+            System.out.println("Process Number: " + sjfP.get(i).First().getNumber() + " End Time: " + sjfP.get(i).Second());
         }
         // while(!sjfP.isEmpty()){
         //     Pair a =  sjfP.poll();

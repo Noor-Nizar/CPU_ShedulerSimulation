@@ -2,9 +2,9 @@ import java.util.ArrayList;
 
 public class SJF {
 
-    public ArrayList<Pair> Sort(ArrayList<Process> PD) {
+    public ArrayList<Pair<Process, Integer>> Sort(ArrayList<Process> PD) {
         // deep copy PD into tPD
-        ArrayList<Pair> retP = new ArrayList<Pair>();
+        ArrayList<Pair<Process, Integer>> retP = new ArrayList<Pair<Process, Integer>>();
         ArrayList<Process> tPD = new ArrayList<Process>();
         for (int i = 0; i < PD.size(); i++) {
             tPD.add(PD.get(i));
@@ -70,13 +70,13 @@ public class SJF {
             if (jnout != -1) {
                 int maxgw = min(tPD.get(jBest).getBurstTime(),
                         tPD.get(jnout).getArrivalTime() - counter);
-                Pair tmp = new Pair(tPD.get(jBest), counter + maxgw); // meed to account for wait time start time
+                Pair<Process, Integer> tmp = new Pair<Process, Integer>(tPD.get(jBest), counter + maxgw); // meed to account for wait time start time
                 retP.add(tmp);
                 tPD.get(jBest).setBurstTime(tPD.get(jBest).getBurstTime() - maxgw);
                 counter += maxgw;
             } else {
                 int maxgw = tPD.get(jBest).getBurstTime();
-                Pair tmp = new Pair(tPD.get(jBest), counter + maxgw);
+                Pair<Process, Integer>tmp = new Pair<Process, Integer>(tPD.get(jBest), counter + maxgw);
                 retP.add(tmp);
                 tPD.get(jBest).setBurstTime(tPD.get(jBest).getBurstTime() - maxgw);
                 counter += maxgw;

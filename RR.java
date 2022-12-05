@@ -3,9 +3,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class RR {
-    public Queue<Pair> run(ArrayList<Process> PD, int RRTQ, int ContextSwitch) {
+    public Queue<Pair<Process, Integer>> run(ArrayList<Process> PD, int RRTQ, int ContextSwitch) {
         // create queue of pair
-        Queue<Pair> q2 = new LinkedList<Pair>();
+        Queue<Pair<Process, Integer>>  q2 = new LinkedList<Pair<Process, Integer>> ();
         Queue<Process> q = new LinkedList<Process>();
 
         for (int i = 0; i < PD.size(); i++) {
@@ -26,17 +26,17 @@ public class RR {
                 p.setBurstTime(p.getBurstTime() - RRTQ);
                 q.add(p);
                 counter += RRTQ;
-                Pair tmp = new Pair(p, counter);
+                Pair<Process, Integer> tmp = new Pair<Process, Integer>(p, counter);
                 System.out.println("counter " + counter);
                 q2.add(tmp);
             } else {
                 counter += p.getBurstTime();
-                Pair tmp = new Pair(p, counter);
+                Pair<Process, Integer> tmp = new Pair<Process, Integer>(p, counter);
                 q2.add(tmp);
             }
             if (q.peek() != p) {
                 counter += cst;
-                Pair tmp = new Pair(new Process(-1, 0, 0, 0), counter);
+                Pair<Process, Integer> tmp = new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter);
                 q2.add(tmp);
             }
         }
@@ -44,12 +44,12 @@ public class RR {
 
     }
 
-    public int avgWaitTimeRR(Queue<Pair> l, int n) {
+    public int avgWaitTimeRR(Queue<Pair<Process, Integer>> l, int n) {
         int sum = 0;
         int lastCounter = 0;
         for (int j = 0; j < n; j++) {
             for (int i = 0; i < l.size(); i++) {
-                if(l.poll().getProcess().getNumber() == j){
+                if(l.poll().First().getNumber() == j){
                     lastCounter = j;
                 }
             }

@@ -1,27 +1,27 @@
-public class Pair {
+public class Pair<T,Q> {
     
-    private Process process;
-    private int time;
+    private T first;
+    private Q second;
     
-    public Pair(Process process, int time) {
-        this.process = process;
-        this.time = time;
+    public Pair(T first, Q second) {
+        this.first = first;
+        this.second = second;
     }
     
-    public Process getProcess() {
-        return process;
+    public T First() {
+        return first;
     }
     
-    public int getTime() {
-        return time;
+    public Q Second() {
+        return second;
     }
     
-    public void setProcess(Process process) {
-        this.process = process;
+    public void setFirst(T first) {
+        this.first = first;
     }
     
-    public void setTime(int time) {
-        this.time = time;
+    public void setSecond(Q second) {
+        this.second = second;
     }
     
 }
