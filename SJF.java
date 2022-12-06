@@ -67,25 +67,23 @@ public class SJF {
                 counter = tPD.get(First).getArrivalTime();
                 continue;
             }
-
+            int maxgw;
             if (jnout != -1) {
-                int maxgw = min(tPD.get(jBest).getBurstTime(),
+                maxgw = min(tPD.get(jBest).getBurstTime(),
                         tPD.get(jnout).getArrivalTime() - counter);
-                Pair<Process, Integer> tmp = new Pair<Process, Integer>(tPD.get(jBest), counter + maxgw); // meed to account for wait time start time
-                retP.add(tmp);
-                tPD.get(jBest).setBurstTime(tPD.get(jBest).getBurstTime() - maxgw);
-                counter += maxgw;
             } else {
-                int maxgw = tPD.get(jBest).getBurstTime();
-                Pair<Process, Integer>tmp = new Pair<Process, Integer>(tPD.get(jBest), counter + maxgw);
-                retP.add(tmp);
-                tPD.get(jBest).setBurstTime(tPD.get(jBest).getBurstTime() - maxgw);
-                counter += maxgw;
+                maxgw = tPD.get(jBest).getBurstTime();
             }
-            //context switching
-            retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter + ContextSwitch));
-            counter += ContextSwitch;
-            // }
+            Pair<Process, Integer> tmp = new Pair<Process, Integer>(tPD.get(jBest), counter + maxgw);                                                      // start time
+            retP.add(tmp);
+            tPD.get(jBest).setBurstTime(tPD.get(jBest).getBurstTime() - maxgw);
+            counter += maxgw;
+            // context switching
+            if (ContextSwitch > 0) {
+                retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter + ContextSwitch));
+                counter += ContextSwitch;
+            }
+            // Debugging
             // System.out.println("counter: " + counter);
             // System.out.println("First: " + First);
             // System.out.println("jBest: " + jBest);
