@@ -9,10 +9,19 @@ public class prog {
     static int ContextSwitch;
     static SJF sjf = new SJF();
     static RR rr = new RR();
+    
+    static IOHandler io;
 
     public static void main(String[] args) {
+        io = new IOHandler();
+        Integer[] argsP = new Integer[3];
+        io.getInput(PD, argsP);
+        nProccesses = argsP[0];
+        RRTQ = argsP[1];
+        ContextSwitch = argsP[2];
+
         
-        // ArrayList<Pair<Process, Integer>> sjfP = sjf.Sort(PD, ContextSwitch);
+        ArrayList<Pair<Process, Integer>> sjfP = sjf.Sort(PD, ContextSwitch);
         // // Queue<Pair> sjfP = rr.run(PD, RRTQ, ContextSwitch);
         // System.out.println("SJF");
         // for (int i = 0; i < sjfP.size(); i++) {
