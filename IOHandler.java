@@ -7,29 +7,26 @@ public class IOHandler {
     String filename;
     int mode = 0;
     Integer args[];
+    Scanner sci = new Scanner(System.in);
     public IOHandler(Integer[] args){
         this.args = args;
-
-        Scanner sc = new Scanner(System.in);
         System.out.println("Enter the number of processes: ");
-        args[0] = sc.nextInt();
+        args[0] = sci.nextInt();
         System.out.println("Enter the Round Robin Time Quantum: ");
-        args[1] = sc.nextInt();
+        args[1] = sci.nextInt();
         System.out.println("Enter the Context Switch Time: ");
-        args[2] = sc.nextInt();
-        sc.nextLine();
+        args[2] = sci.nextInt();
+        sci.nextLine();
         System.out.println("Input From File or Console? (F/C)");
-        String input = sc.nextLine();
+        String input = sci.nextLine();
         if(input.equals("F")){
             System.out.println("Enter the filename: ");
-            filename = sc.nextLine();
+            filename = sci.nextLine();
             mode = 1;
         }
         else{
-            filename = "input.txt";
             mode = 2;
         }
-        sc.close();
     }
     void FromFile(ArrayList<Process> retP, Integer[] args) throws FileNotFoundException{
         Scanner sc = new Scanner(new File(filename));
@@ -46,20 +43,19 @@ public class IOHandler {
         sc.close();
     }
     void DataFromTerminal(ArrayList<Process> PD, Integer[] args){
-        Scanner sc = new Scanner(System.in);
         for (int i = 0; i < args[0]; i++) {
-            System.out.println("Enter the Process Number: ");
-            int Number = sc.nextInt();
+            System.out.println("Enter the Process Number:");
+            int Number = sci.nextInt();
             System.out.println("Enter the Process Arrival Time: ");
-            int ArrivalTime = sc.nextInt();
+            int ArrivalTime = sci.nextInt();
             System.out.println("Enter the Process Burst Time: ");
-            int BurstTime = sc.nextInt();
+            int BurstTime = sci.nextInt();
             System.out.println("Enter the Process Priority: ");
-            int Priority = sc.nextInt();
+            int Priority = sci.nextInt();
             Process tmp = new Process(Number, ArrivalTime, BurstTime, Priority);
             PD.add(tmp);
         }
-        sc.close();
+        sci.close();
     }
 
     public void getInput(ArrayList<Process> PD){
@@ -70,7 +66,7 @@ public class IOHandler {
                 e.printStackTrace();
             }
         }
-        else{
+        else if(mode == 2){
             DataFromTerminal(PD, args);
         }
     }
