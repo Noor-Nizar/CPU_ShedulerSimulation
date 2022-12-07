@@ -80,8 +80,18 @@ public class SJF {
             counter += maxgw;
             // context switching
             if (ContextSwitch > 0) {
-                retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter + ContextSwitch));
-                counter += ContextSwitch;
+                if (jnout != -1) {
+                    if ((tPD.get(jBest).getBurstTime() > tPD.get(jnout).getBurstTime()
+                            || tPD.get(jBest).getBurstTime() == 0)) {
+                        retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter + ContextSwitch));
+                        counter += ContextSwitch;
+                    }
+                } else {
+                    if (tPD.get(jBest).getBurstTime() == 0) {
+                        retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter + ContextSwitch));
+                        counter += ContextSwitch;
+                    }
+                }
             }
             // Debugging
             // System.out.println("counter: " + counter);

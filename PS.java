@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
 public class PS {
+
     public ArrayList<Pair<Process, Integer>> Sort(ArrayList<Process> PD, int ContextSwitch) {
         // deep copy PD into tPD
         ArrayList<Pair<Process, Integer>> retP = new ArrayList<Pair<Process, Integer>>();
@@ -8,7 +9,7 @@ public class PS {
         for (int i = 0; i < PD.size(); i++) {
             tPD.add(PD.get(i));
         }
-        // Sorting on Priority
+        // Sorting on Burst Time
         for (int i = 0; i < tPD.size(); i++) {
             for (int j = 0; j < tPD.size(); j++) {
                 if (tPD.get(i).getPriority() < tPD.get(j).getPriority()) {
@@ -30,6 +31,7 @@ public class PS {
         }
         int counter = 0; // represents Time
         int dbg = 5; // debug counter
+        int retpCounter = -1;
         while (true) {
             int jBest = -1; // the best process to run that has arrived so far
             int jnout = -1; // the process tht is arriving next
@@ -47,7 +49,7 @@ public class PS {
                     if (jBest == -1) {
                         jBest = j;
                     } else {
-                        if (tPD.get(j).getBurstTime() < tPD.get(jBest).getBurstTime()) {
+                        if (tPD.get(j).getPriority() < tPD.get(jBest).getPriority()) {
                             jBest = j;
                         }
                     }
@@ -73,19 +75,39 @@ public class PS {
             } else {
                 maxgw = tPD.get(jBest).getBurstTime();
             }
-            Pair<Process, Integer> tmp = new Pair<Process, Integer>(tPD.get(jBest), counter + maxgw);                                                      // start time
+
+            Pair<Process, Integer> tmp = new Pair<Process, Integer>(tPD.get(jBest), counter + maxgw); // start time
             retP.add(tmp);
             tPD.get(jBest).setBurstTime(tPD.get(jBest).getBurstTime() - maxgw);
             counter += maxgw;
-            // context switching
+
             if (ContextSwitch > 0) {
-                retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter + ContextSwitch));
-                counter += ContextSwitch;
+                if (jnout != -1) {
+                    if ((tPD.get(jBest).getPriority() > tPD.get(jnout).getPriority()
+                            || tPD.get(jBest).getBurstTime() == 0)) {
+                        retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter + ContextSwitch));
+                        counter += ContextSwitch;
+                    }
+                } else {
+                    if (tPD.get(jBest).getBurstTime() == 0) {
+                        retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter + ContextSwitch));
+                        counter += ContextSwitch;
+                    }
+                }
             }
-        }    
+            // Debugging
+            // System.out.println("counter: " + counter);
+            // System.out.println("First: " + First);
+            // System.out.println("jBest: " + jBest);
+            // System.out.println("--------------------");
+            // prog.PDprinter(tPD);
+            // System.out.println("--------------------");
+        }
+
         return retP;
 
     }
+
     private int min(int burstTime, int burstTime2) {
         if (burstTime < burstTime2) {
             return burstTime;
@@ -94,16 +116,3 @@ public class PS {
         }
     }
 }
-/* P0       AT       BT      P                
-   P1       0        7       2
-   P2       2        4       1
-   P3       4        2       4
-   P4       6        3       3
-
-P1 / P2 / P1 / P4 / P3
-0  /2   /6   /11   /14  /16
-
-
-
-
-*/
