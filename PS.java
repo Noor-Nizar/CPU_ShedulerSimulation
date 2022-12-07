@@ -1,8 +1,9 @@
 import java.util.ArrayList;
+import java.math.*;
 
 public class PS {
 
-    public ArrayList<Pair<Process, Integer>> Sort(ArrayList<Process> PD, int ContextSwitch) {
+    public ArrayList<Pair<Process, Integer>> Sort(ArrayList<Process> PD, int ContextSwitch, int AgeTime) {
         // deep copy PD into tPD
         ArrayList<Pair<Process, Integer>> retP = new ArrayList<Pair<Process, Integer>>();
         ArrayList<Process> tPD = new ArrayList<Process>();
@@ -46,6 +47,12 @@ public class PS {
                 }
 
                 if (tPD.get(j).getArrivalTime() <= counter) {
+                    // aging
+                    if (tPD.get(j).getPriority() > 0) {
+                        tPD.get(j).setPriority(Math.max(tPD.get(j).getPriority()
+                                - (int) Math.floor(counter / AgeTime)
+                                + (int) Math.floor(min(counter, 1) - 1 / AgeTime), 0));
+                    }
                     if (jBest == -1) {
                         jBest = j;
                     } else {
@@ -82,11 +89,10 @@ public class PS {
             counter += maxgw;
 
             if (ContextSwitch > 0) {
-                if(tPD.get(jBest).getBurstTime() == 0){
+                if (tPD.get(jBest).getBurstTime() == 0) {
                     retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter + ContextSwitch));
                     counter += ContextSwitch;
-                }
-                else if (jnout != -1) {
+                } else if (jnout != -1) {
                     if (tPD.get(jBest).getPriority() > tPD.get(jnout).getPriority()) {
                         retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter + ContextSwitch));
                         counter += ContextSwitch;
@@ -94,15 +100,15 @@ public class PS {
                 }
             }
             // Debugging
-            // System.out.println("counter: " + counter);
+            System.out.println("counter: " + counter);
             // System.out.println("First: " + First);
             // System.out.println("jBest: " + jBest);
             // System.out.println("--------------------");
-            // prog.PDprinter(tPD);
+            IOHandler.PDprinter(tPD);
             // System.out.println("--------------------");
         }
 
-        if(ContextSwitch > 0){
+        if (ContextSwitch > 0) {
             retP.remove(retP.size() - 1);
         }
         return retP;

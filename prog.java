@@ -12,7 +12,8 @@ public class prog {
     static PS ps = new PS();
     
     static IOHandler io;
-
+    
+    static int AgeTime = 1; // << !!!!!!!!!
 
     public static void main(String[] args) {
         Integer[] argsP = new Integer[3];
@@ -23,7 +24,7 @@ public class prog {
         ContextSwitch = argsP[2];
 
         
-        ArrayList<Pair<Process, Integer>> sjfP = ps.Sort(PD, ContextSwitch);
+        ArrayList<Pair<Process, Integer>> sjfP = ps.Sort(PD, ContextSwitch, AgeTime);
         // // Queue<Pair> sjfP = rr.run(PD, RRTQ, ContextSwitch);
         // System.out.println("SJF");
         for (int i = 0; i < sjfP.size(); i++) {
