@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class PS {
-    public ArrayList<Pair<Process, Integer>> run(ArrayList<Process> PD, int ContextSwitch) {
+    public ArrayList<Pair<Process, Integer>> Sort(ArrayList<Process> PD, int ContextSwitch) {
         // deep copy PD into tPD
         ArrayList<Pair<Process, Integer>> retP = new ArrayList<Pair<Process, Integer>>();
         ArrayList<Process> tPD = new ArrayList<Process>();

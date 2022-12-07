@@ -9,6 +9,7 @@ public class prog {
     static int ContextSwitch;
     static SJF sjf = new SJF();
     static RR rr = new RR();
+    static PS ps = new PS();
     
     static IOHandler io;
 
@@ -21,7 +22,7 @@ public class prog {
         ContextSwitch = argsP[2];
 
         
-        ArrayList<Pair<Process, Integer>> sjfP = sjf.Sort(PD, ContextSwitch);
+        ArrayList<Pair<Process, Integer>> sjfP = ps.Sort(PD, ContextSwitch);
         // // Queue<Pair> sjfP = rr.run(PD, RRTQ, ContextSwitch);
         // System.out.println("SJF");
         for (int i = 0; i < sjfP.size(); i++) {
