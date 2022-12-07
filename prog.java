@@ -7,51 +7,33 @@ public class prog {
     static int nProccesses;
     static int RRTQ;
     static int ContextSwitch;
+    static SJF sjf = new SJF();
+    static RR rr = new RR();
+    static PS ps = new PS();
+    
+    static IOHandler io;
+
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        Integer[] argsP = new Integer[3];
+        io = new IOHandler(argsP);
+        io.getInput(PD);
+        nProccesses = argsP[0];
+        RRTQ = argsP[1];
+        ContextSwitch = argsP[2];
 
-        System.out.println("Enter the number of processes: ");
-        nProccesses = sc.nextInt();
-        System.out.println("Enter the Round Robin Time Quantum: ");
-        RRTQ = sc.nextInt();
-        System.out.println("Enter the Context Switch Time: ");
-        ContextSwitch = sc.nextInt();
-        for (int i = 0; i < nProccesses; i++) {
-            System.out.println("Enter the Process Number: ");
-            int Number = sc.nextInt();
-            System.out.println("Enter the Process Arrival Time: ");
-            int ArrivalTime = sc.nextInt();
-            System.out.println("Enter the Process Burst Time: ");
-            int BurstTime = sc.nextInt();
-            System.out.println("Enter the Process Priority: ");
-            int Priority = sc.nextInt();
-            Process tmp = new Process(Number, ArrivalTime, BurstTime, Priority);
-            PD.add(tmp);
-        }
-        sc.close();
-
-        ///SJF
-        SJF sjf = new SJF();
-        RR rr = new RR();
-        ArrayList<Pair<Process, Integer>> sjfP = sjf.Sort(PD, ContextSwitch);
-        // Queue<Pair> sjfP = rr.run(PD, RRTQ, ContextSwitch);
-        System.out.println("SJF");
+        
+        ArrayList<Pair<Process, Integer>> sjfP = ps.Sort(PD, ContextSwitch);
+        // // Queue<Pair> sjfP = rr.run(PD, RRTQ, ContextSwitch);
+        // System.out.println("SJF");
         for (int i = 0; i < sjfP.size(); i++) {
             System.out.println("Process Number: " + sjfP.get(i).First().getNumber() + " End Time: " + sjfP.get(i).Second());
         }
-        // while(!sjfP.isEmpty()){
-        //     Pair a =  sjfP.poll();
-        //     System.out.println("Process Number: " + a.getProcess().getNumber() + "End Time : " + a.getTime());
-        // }
+        // // while(!sjfP.isEmpty()){
+        // //     Pair a =  sjfP.poll();
+        // //     System.out.println("Process Number: " + a.getProcess().getNumber() + "End Time : " + a.getTime());
+        // // }
 
-    }
-    
-
-    public static void PDprinter(ArrayList<Process> PD) {
-        for (int i = 0; i < PD.size(); i++) {
-            System.out.println("Process Number: " + PD.get(i).getNumber() + " Arrival Time: " + PD.get(i).getArrivalTime() + " Burst Time: " + PD.get(i).getBurstTime() + " Priority: " + PD.get(i).getPriority());
-        }
     }
 
 }
