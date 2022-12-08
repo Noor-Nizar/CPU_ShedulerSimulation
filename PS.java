@@ -7,6 +7,8 @@ public class PS {
         // deep copy PD into tPD
         ArrayList<Pair<Process, Integer>> retP = new ArrayList<Pair<Process, Integer>>();
         ArrayList<Process> tPD = new ArrayList<Process>();
+
+        ArrayList<Integer> initialPriority = new ArrayList<Integer>();
         for (int i = 0; i < PD.size(); i++) {
             tPD.add(PD.get(i));
         }
@@ -30,6 +32,9 @@ public class PS {
                 }
             }
         }
+        for (int i = 0; i < tPD.size(); i++) {
+            initialPriority.add(tPD.get(i).getPriority());
+        }
         int counter = 0; // represents Time
         int dbg = 5; // debug counter
         int retpCounter = -1;
@@ -48,11 +53,13 @@ public class PS {
 
                 if (tPD.get(j).getArrivalTime() <= counter) {
                     // aging
+                    int tdiff = Math.max(counter - tPD.get(j).getArrivalTime(), 0);
                     if (tPD.get(j).getPriority() > 0) {
-                        tPD.get(j).setPriority(Math.max(tPD.get(j).getPriority()
-                                - (int) Math.floor(counter / AgeTime)
-                                + (int) Math.floor(min(counter, 1) - 1 / AgeTime), 0));
+                        tPD.get(j).setPriority(Math.max(initialPriority.get(j)
+                                - (int) Math.floor(tdiff / AgeTime)
+                                , 0));
                     }
+                    //+ (int) Math.floor(Math.max(tdiff - 1, 0)/ AgeTime)
                     if (jBest == -1) {
                         jBest = j;
                     } else {
