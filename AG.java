@@ -21,14 +21,30 @@ public class AG {
                 }
             }
         }
+        /*----------------------------------------------------------------
+         * Once a process is executed for given time period, it’s called FCFS till the
+
+finishing of (ceil(52%)) of its Quantum time then it’s converted to non-
+preemptive Priority till the finishing of the next (ceil(52%)), after that it’s
+
+converted to preemptive Shortest- Job First (SJF).
+         * 
+         */
         int dbg = tPD.size();
         cuProcess = tPD.get(0);
         // ArrayList<Process> tPD_Next = prog.DeepCopy(tPD);
         while (tPD.size() > 0) {
             int Q = cuProcess.getQuantum();
-            int Q25 = (int) Math.ceil(Q * 0.25);
-            int Q25nd = (int) Math.ceil((Q - Q25) * 0.25);
+            int Q25 = (int) Math.ceil(Q * 0.25);    // Q25 + Q25nd = Q()
+            int Q25nd = (int) Math.ceil(Q*0.5)-Q25;
+            if(Q25 == Q){
+                Q25nd = 0;
+            }
             int RQ = Q - Q25 - Q25nd;
+            // int Q = cuProcess.getQuantum();
+            // int Q25 = (int) Math.ceil(Q * 0.25);
+            // int Q25nd = (int) Math.ceil((Q * 0.25));
+            // int RQ = Q - Q25nd;
 
             for (int i = 0; i < tPD.size(); i++) {
                 for (int j = 0; j < tPD.size(); j++) {
@@ -39,6 +55,9 @@ public class AG {
                     }
                 }
             }
+            // for (int i = 0; i < tPD.size(); i++) {
+            //     System.out.println("Quantum Time : " + tPD.get(i).getQuantum() + " Pnum :" + tPD.get(i).getNumber() + "\n");
+            // }
             // cuProcess = tPD.get(0);
             int nxtTime = Math.min(Q25, cuProcess.getBurstTime());
             time += nxtTime;
@@ -81,14 +100,15 @@ public class AG {
                 if (tPD.size() == 0) {
                     break;
                 }
+                // (int)Math.ceil((prev.getQuantum()- Math.ceil( prev.getQuantum()*0.25))/2)
                 cuProcess = tPD.get(0);
                 continue;
             }
             cuProcess.setBurstTime(cuProcess.getBurstTime() - workTimeNPP);
             if (workTimeNPP == avwt) {
-                Process tmp = new Process(cuProcess.getNumber(), cuProcess.getArrivalTime() + time,
+                Process tmp = new Process(cuProcess.getNumber(), cuProcess.getArrivalTime() + 0,
                         cuProcess.getBurstTime(), cuProcess.getPriority(),
-                        cuProcess.getQuantum() + (int) Math.ceil((Q25nd - workTimeNPP) / 2));
+                        cuProcess.getQuantum() + (int) Math.ceil((double)(  Q-Q25-workTimeNPP ) / 2));
                 tPD.remove(cuProcess);
                 cuProcess = jBest;
                 tPD.add(tmp);
@@ -135,10 +155,10 @@ public class AG {
             int WorkTime = Math.min(avwt2, remQuantum);
             time += WorkTime;
             cuProcess.setBurstTime(cuProcess.getBurstTime() - WorkTime);
-            cuProcess.setArrivalTime(cuProcess.getArrivalTime() + time);
+            cuProcess.setArrivalTime(cuProcess.getArrivalTime() + 0);
 
             pExecOrder.add(new Pair<Process, Integer>(cuProcess, time));
-            if (workTimeNPP == cuProcess.getBurstTime()) {
+            if (cuProcess.getBurstTime() == 0) {
                 tPD.remove(cuProcess);
                 if (tPD.size() == 0) {
                     break;

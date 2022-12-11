@@ -35,6 +35,23 @@ public class prog {
         // ArrayList<Pair<Process, Integer>> sjfP = sjf.Sort(PD, ContextSwitch);
         // ArrayList<Pair<Process, Integer>> rrP = rr.Sort(DeepCopy(PD), RRTQ, ContextSwitch);
         // ArrayList<Pair<Process, Integer>> psP = ps.Sort(DeepCopy(PD), ContextSwitch, AgeTime);
+        ArrayList<Pair<Process, Integer>> sjfP = sjf.Sort(PD, ContextSwitch);
+        
+        Time.findWaitingTime(sjfP,PD);
+
+        // // Queue<Pair> sjfP = rr.run(PD, RRTQ, ContextSwitch);
+        // System.out.println("SJF");
+        for (int i = 0; i < sjfP.size(); i++) {
+            System.out.println("Process Number: " + sjfP.get(i).First().getNumber() + " End Time: " + sjfP.get(i).Second());
+        }
+
+        ArrayList<Integer>  a = Time.findWaitingTime(sjfP,PD);
+        for(int i = 0; i < a.size(); i++){
+            System.out.println("Process Number: " + (i+1)+"Wait Time: " + a.get(i));
+        }
+        System.out.println("--------------------------------");
+        System.out.println(Time.findWaitingTime(sjfP,PD));
+        System.out.println("AvgWaitTime: " + Time.AvgTime(Time.findWaitingTime(sjfP,PD)));
         ArrayList<Pair<Process, Integer>> agP = ag.Sort(PD);
 
         // Time.findWaitingTime(sjfP, PD);
