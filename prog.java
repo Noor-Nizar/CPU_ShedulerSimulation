@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.Vector;
 
 public class prog {
     static int nProccesses;
@@ -17,7 +18,6 @@ public class prog {
 
     public static void main(String[] args) {
         ArrayList<Process> PD = new ArrayList<Process>();
-
         Integer[] argsP = new Integer[3];
         io = new IOHandler(argsP);
         io.getInput(PD);
@@ -45,7 +45,7 @@ public class prog {
             System.out.println("Process Number: " + sjfP.get(i).First().getNumber()+"Wait Time: " + Time.findWaitingTime(sjfP,PD) );
         }
         System.out.println(Time.findWaitingTime(sjfP,PD));
-        System.out.println("AvgWaitTime: " + Time.AvgWaitTime(Time.findWaitingTime(sjfP,PD)));
+        System.out.println("AvgWaitTime: " + Time.AvgTime(Time.findWaitingTime(sjfP,PD)));
         // // while(!sjfP.isEmpty()){
         // //     Pair a =  sjfP.poll();
         // //     System.out.println("Process Number: " + a.getProcess().getNumber() + "End Time : " + a.getTime());
@@ -55,8 +55,16 @@ public class prog {
 
 
 
-public static ArrayList<Process> DeepCopy(ArrayList<Process> PD){
+    public static ArrayList<Process> DeepCopy(ArrayList<Process> PD){
         ArrayList<Process> mPD = new ArrayList<Process>();
+        for (int i = 0; i < PD.size(); i++) {
+            Process p = new Process(PD.get(i).getNumber(), PD.get(i).getArrivalTime(), PD.get(i).getBurstTime(), PD.get(i).getPriority(),PD.get(i).getQuantum());
+            mPD.add(p);
+        }
+        return mPD;
+    }
+    public static Vector<Process> DeepCopyV(ArrayList<Process> PD){
+        Vector<Process> mPD = new Vector<Process>();
         for (int i = 0; i < PD.size(); i++) {
             Process p = new Process(PD.get(i).getNumber(), PD.get(i).getArrivalTime(), PD.get(i).getBurstTime(), PD.get(i).getPriority(),PD.get(i).getQuantum());
             mPD.add(p);
