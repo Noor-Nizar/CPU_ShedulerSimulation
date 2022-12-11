@@ -12,22 +12,23 @@ public class prog {
     static AG ag = new AG();
 
     static IOHandler io;
-
+    
     static int AgeTime = 1; // << !!!!!!!!!
-
+    
     public static void main(String[] args) {
         ArrayList<Process> PD = new ArrayList<Process>();
 
         Integer[] argsP = new Integer[4];
         io = new IOHandler(argsP);
         io.getInput(PD);
-        // System.out.println(PD);
+        // System.out.println("");
         nProccesses = argsP[0];
         RRTQ = argsP[1];
         ContextSwitch = argsP[2];
 
         ArrayList<Pair<Process, Integer>> output;
         if (argsP[3] == 0) {
+            System.out.println("SJF");
             output = sjf.Sort(PD, ContextSwitch);
         }
         else if (argsP[3] == 1) {
@@ -45,7 +46,7 @@ public class prog {
 
         IOHandler.PrintTimeInfo(output, PD);
         IOHandler.PEOprinter(output);
-
+        
 
     }
 
