@@ -7,10 +7,11 @@ public class RR {
         // create queue of pair
         Queue<Pair<Process, Integer>> q2 = new LinkedList<Pair<Process, Integer>>();
         Queue<Process> q = new LinkedList<Process>();
+        ArrayList<Process> tPD = prog.DeepCopy(PD);
 
         for (int i = 0; i < PD.size(); i++) {
-            q.add(PD.get(i));
-            System.out.println("burst" + PD.get(i).getBurstTime());
+            q.add(tPD.get(i));
+            // System.out.println("burst" + PD.get(i).getBurstTime());
         }
         int counter = 0;
         int cst = ContextSwitch;
@@ -34,7 +35,7 @@ public class RR {
                 Pair<Process, Integer> tmp = new Pair<Process, Integer>(p, counter);
                 q2.add(tmp);
             }
-            if (q.peek() != p) {
+            if (q.peek() != p && ContextSwitch > 0) {
                 counter += cst;
                 Pair<Process, Integer> tmp = new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter);
                 q2.add(tmp);

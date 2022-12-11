@@ -116,11 +116,6 @@ public class SJF {
         ArrayList<Process> tPD = new ArrayList<Process>();
 
         tPD = prog.DeepCopy(PD);
-        // for(int i=0; i<proc.size(); i++){
-        // proc.get(i).setFirst(p.get(i).First());
-        // proc.get(i).setSecond(p.get(i).Second());
-
-        // }
 
         int waitTime[] = new int[tPD.size()];
         int m[] = new int[tPD.size()];

@@ -17,13 +17,16 @@ public class IOHandler {
         System.out.println("Enter the Context Switch Time: ");
         args[2] = sci.nextInt();
         sci.nextLine();
+        System.out.println("Enter the Algorithm: (0) SJF, (1) RR, (2) PS, (3) AG ");
+        args[3] = sci.nextInt();
+        sci.nextLine();
         System.out.println("Input From File or Console? (F/C)");
         String input = sci.nextLine();
         if(input.equals("F")){
             System.out.println("Enter the filename (or enter for default): ");
             filename = sci.nextLine();
             if(filename.equals(""))
-                filename = "input.txt"; // default filename
+                filename = "sjf.txt"; // default filename
             mode = 1;
         }
         else{
@@ -86,4 +89,21 @@ public class IOHandler {
             System.out.println("Process Number: " + PEO.get(i).First().getNumber() + "End Time: " + PEO.get(i).Second());
         }
     }
+
+    public static void PrintTimeInfo(ArrayList<Pair<Process, Integer>> sjfP, ArrayList<Process> PD){
+        ArrayList<Integer>  a = Time.findWaitingTime(sjfP,PD);
+        System.out.println("Wait Times");
+        System.out.println(a);
+        System.out.println("--------------------------------");
+        System.out.println("Avg Wait Time: " + Time.AvgTime(a));
+        System.out.println("--------------------------------");
+        ArrayList<Integer>  b = Time.TAT(sjfP,PD);
+        System.out.println("Turnaround Times");
+        System.out.println(b);
+        System.out.println("--------------------------------");
+        System.out.println("Avg Turnaround Time: " + Time.AvgTime(b));
+        System.out.println("--------------------------------");
+    }
+
+    
 }

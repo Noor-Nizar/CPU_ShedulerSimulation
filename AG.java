@@ -41,10 +41,31 @@ converted to preemptive Shortest- Job First (SJF).
                 Q25nd = 0;
             }
             int RQ = Q - Q25 - Q25nd;
-            // int Q = cuProcess.getQuantum();
-            // int Q25 = (int) Math.ceil(Q * 0.25);
-            // int Q25nd = (int) Math.ceil((Q * 0.25));
-            // int RQ = Q - Q25nd;
+            var tPD_Qupd = prog.DeepCopy(tPD);
+            //sort on process name
+            for (int i = 0; i < tPD_Qupd.size(); i++) {
+                for (int j = 0; j < tPD_Qupd.size(); j++) {
+                    if (tPD_Qupd.get(i).getNumber() < tPD_Qupd.get(j).getNumber()) {
+                        Process tmp = tPD_Qupd.get(i);
+                        tPD_Qupd.set(i, tPD_Qupd.get(j));
+                        tPD_Qupd.set(j, tmp);
+                    }
+                }
+            }
+            String s = "";
+            for (int i = 0; i < PD.size(); i++) {
+                int nxtQuantum = 0;
+                
+                for (int j = 0; j < tPD_Qupd.size(); j++) {
+                    if (PD.get(i).getNumber() == tPD_Qupd.get(j).getNumber()) {
+                        nxtQuantum = tPD_Qupd.get(j).getQuantum();
+                        break;
+                    }
+                }
+                s += nxtQuantum + ", ";
+                
+            }
+            System.out.println("Quantum(" + s + ")");
 
             for (int i = 0; i < tPD.size(); i++) {
                 for (int j = 0; j < tPD.size(); j++) {
@@ -55,9 +76,7 @@ converted to preemptive Shortest- Job First (SJF).
                     }
                 }
             }
-            // for (int i = 0; i < tPD.size(); i++) {
-            //     System.out.println("Quantum Time : " + tPD.get(i).getQuantum() + " Pnum :" + tPD.get(i).getNumber() + "\n");
-            // }
+            
             // cuProcess = tPD.get(0);
             int nxtTime = Math.min(Q25, cuProcess.getBurstTime());
             time += nxtTime;
