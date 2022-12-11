@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Vector;
 import java.lang.Math;
 public class AG {
     public int time=0 ;
@@ -10,10 +11,8 @@ public class AG {
         Process cuProcess;
         Process prev;
         Queue<Process> q = new LinkedList<Process>();
-        ArrayList<Process> tPD = new ArrayList<Process>();
-        for (int i = 0; i < PD.size(); i++) {
-            tPD.add(PD.get(i));
-        }
+        Vector<Process> tPD = new Vector<Process>();
+        tPD = prog.DeepCopyV(PD);
         for (int i = 0; i < tPD.size(); i++) {
             for (int j = 0; j < tPD.size(); j++) {
                 if (tPD.get(i).getArrivalTime() < tPD.get(j).getArrivalTime()) {
@@ -38,6 +37,9 @@ public class AG {
 
         int nxtTime = Math.min((int)Math.ceil( cuProcess.getQuantum()*0.25), cuProcess.getBurstTime());
         time += nxtTime;
+        if(nxtTime==cuProcess.getBurstTime()){
+            cuProcess.setQuantum(0);
+        }
         cuProcess.setBurstTime(cuProcess.getBurstTime()-nxtTime);
         
         int jBest = -1; // the best process to run that has arrived so far
@@ -70,8 +72,13 @@ public class AG {
         prev = cuProcess;
         cuProcess = tPD.get(jBest);
         if(prev.getNumber() == cuProcess.getNumber()){
-            time += (int)Math.ceil(cuProcess.getQuantum() *0.5- cuProcess.getQuantum()*0.25);
-            cuProcess.setBurstTime(cuProcess.getBurstTime()-(int)Math.ceil( cuProcess.getQuantum()*0.25));
+            nxtTime = Math.min((int)Math.ceil(cuProcess.getQuantum() *0.25), cuProcess.getBurstTime());
+            time += nxtTime;
+            if(nxtTime==cuProcess.getBurstTime()){
+                cuProcess.setQuantum(0);
+            }
+            //time += (int)Math.ceil(cuProcess.getQuantum() *0.5- cuProcess.getQuantum()*0.25);
+            cuProcess.setBurstTime(cuProcess.getBurstTime()-nxtTime);
             jBest = -1; // the best process to run that has arrived so far
             jnout = -1; // the process tht is arriving next
             First = -1;
@@ -107,6 +114,25 @@ public class AG {
                 // int t = cuProcess.getBurstTime();
                 // cuProcess.setBurstTime(0);
                 // jBest = -1; // index process we are working on
+                // int nextLeast = 0;
+                // for (int j = 1; j < tPD.size(); j++) {
+                //     int tdiffj = tPD.get(j).getArrivalTime() - time;
+                //     int tdiffl = tPD.get(nextLeast).getArrivalTime() - time;
+                //     if(tPD.get(j).getBurstTime() + tdiffj < tPD.get(nextLeast).getBurstTime() + tdiffl) {
+                //         nextLeast = j;
+                //     }
+                // }
+                // int WorkTime;
+                // if (nextLeast!= 0) {
+                //     WorkTime = Math.min(tPD.get(nextLeast).getArrivalTime() - time, cuProcess.getBurstTime());
+                //     cuProcess.setBurstTime(cuProcess.getBurstTime() - WorkTime);
+                //     // add process to end of..
+                // }else{
+                //     WorkTime = cuProcess.getBurstTime();
+                //     cuProcess.setBurstTime(0);
+                //     // remove process 
+                // }
+                // time += WorkTime;
                 int nextLeast = 0;
                 for (int j = 1; j < tPD.size(); j++) {
                     int tdiffj = tPD.get(j).getArrivalTime() - time;
@@ -122,20 +148,23 @@ public class AG {
                     // add process to end of..
                 }else{
                     WorkTime = cuProcess.getBurstTime();
-                    cuProcess.setBurstTime(0);
+                    cuProcess.setBurstTime((int)(WorkTime - Math.ceil(cuProcess.getQuantum()*0.5)));
                     // remove process 
                 }
                 time += WorkTime;
+                cuProcess.setQuantum(cuProcess.getQuantum()*2);
             }
             else{
+                prev.setQuantum((int)((2*prev.getQuantum())-Math.ceil( prev.getQuantum()*0.5)));
                 continue;
             }
         }
         else {
+            prev.setQuantum((int)Math.ceil((prev.getQuantum()- Math.ceil( prev.getQuantum()*0.25))/2));
             continue;
         }
         }
-        return null;
+        
     }
 }
 // 1-Check arrivial process
@@ -148,57 +177,57 @@ public class AG {
 // 8-check if current process has lowest burst time if yes continue if no set current process to be shortest job then back to step 1
 // 9-run current process 50% of its quantum time (remeber it is preemptive so step 8 must be repeated)
 
+// import java.util.Queue;
 
-// public static void runAGScheduling(List<Process> processes) {
-//     // Sort the list of processes in ascending order of their arrival time
-//     Collections.sort(processes);
+// public class AGScheduling {
+//     // The queue of processes to be executed
+//     private Queue<Process> queue;
 
-//     // Run the processes in the list
-//     while (!processes.isEmpty()) {
-//         Process currProcess = processes.remove(0);
-//         int quantum = currProcess.getQuantum();
+//     // The current process being executed
+//     private Process currentProcess;
 
-//         // Execute the process as FCFS until 25% of its quantum time has been reached
-//         int timeElapsed = 0;
-//         while (timeElapsed < quantum * 0.25) {
-//             // Execute the process for 1 time unit
-//             currProcess.execute();
-//             timeElapsed++;
-
-//             // If the process has completed, move on to the next process
-//             if (currProcess.isCompleted()) {
-//                 break;
-//             }
-//         }
-
-//         // If the process has not completed, add it to the end of the list and increase its quantum time by 2
-//         if (!currProcess.isCompleted()) {
-//             currProcess.setQuantum(quantum + 2);
-//             processes.add(currProcess);
-
-//             // Execute the process as non-preemptive priority until 50% of its quantum time has been reached
-//             while (timeElapsed < quantum * 0.5) {
-//                 // Execute the process for 1 time unit
-//                 currProcess.execute();
-//                 timeElapsed++;
-
-//                 // If the process has completed, move on to the next process
-//                 if (currProcess.isCompleted()) {
-//                     break;
-//                 }
-//             }
-//         }
-
-//         // If the process has not completed, add it to the end of the list and increase its quantum time by 50% of the remaining quantum time
-//         if (!currProcess.isCompleted()) {
-//             currProcess.setQuantum((int) Math.ceil((quantum - timeElapsed) / 2.0));
-//             processes.add(currProcess);
-
-//             // Execute the process as preemptive shortest-job first until it completes
-//             while (!currProcess.isCompleted()) {
-//                 // Execute the process for 1 time unit
-//                 currProcess.execute();
-//             }
-//         }
+//     public AGScheduling() {
+//         // Initialize the queue
+//         queue = new LinkedList<Process>();
 //     }
-// }
+
+//     public void addProcess(Process p) {
+//         // Add a process to the queue
+//         queue.add(p);
+//     }
+
+//     public void run() {
+//         // Run the scheduler until there are no more processes in the queue
+//         while (!queue.isEmpty()) {
+//             // Get the next process in the queue
+//             currentProcess = queue.poll();
+
+//             // Execute the process for its quantum time
+//             currentProcess.execute(currentProcess.getQuantumTime());
+
+//             // Check if the process used up its entire quantum time
+//             if (currentProcess.isComplete()) {
+//                 // The process is complete, so we can set its quantum time to zero
+//                 currentProcess.setQuantumTime(0);
+//             } else {
+//                 // The process is not complete, so we need to add it back to the queue
+//                 // and update its quantum time based on the scenario
+//                 if (currentProcess.getSchedulingTechnique() == SchedulingTechnique.FCFS &&
+//                     currentProcess.getElapsedTime() < 0.25 * currentProcess.getQuantumTime()) {
+//                     // Scenario 1: The process was executed using FCFS and did not use up 25% of its quantum time
+//                     // Add the process to the end of the queue and increase its quantum time by two
+//                     queue.add(currentProcess);
+//                     currentProcess.setQuantumTime(currentProcess.getQuantumTime() + 2);
+//                 } else if (currentProcess.getSchedulingTechnique() == SchedulingTechnique.NON_PREEMPTIVE_PRIORITY &&
+//                            currentProcess.getElapsedTime() < 0.25 * currentProcess.getQuantumTime()) {
+//                     // Scenario 2: The process was executed using non-preemptive priority and did not use up 25% of its quantum time
+//                     // Add the process to the end of the queue and increase its quantum time by half of the remaining quantum time
+//                     queue.add(currentProcess);
+//                     currentProcess.setQuantumTime(currentProcess.getQuantumTime() + 0.5 * (currentProcess.getQuantumTime() - currentProcess.getElapsedTime()));
+//                 } else if (currentProcess.getSchedulingTechnique() == SchedulingTechnique.PREEMPTIVE_SJF &&
+//                            currentProcess.getElapsedTime() < currentProcess.getQuantumTime()) {
+//                     // Scenario 3: The process was executed using preemptive SJF and did not use up all of its quantum time
+//                     // Add the process to the end of the queue and increase its quantum time by the remaining quantum time
+//                     queue.add(currentProcess);
+//                     currentProcess.setQuantumTime(currentProcess.getQuantumTime() + (currentProcess.getQuantumTime() - currentProcess.getElapsedTime()));
+//                 } else {
