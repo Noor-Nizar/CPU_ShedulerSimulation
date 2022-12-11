@@ -4,12 +4,20 @@ public class Process {
     private int BurstTime;
     private int Priority;
     private int WaitingTime;
+    private int Quantum;
+    public Process(int Number, int ArrivalTime, int BurstTime, int Priority,int Quantum) {
+        this.Number = Number;
+        this.ArrivalTime = ArrivalTime;
+        this.Priority = Priority;
+        this.BurstTime = BurstTime;
+        this.Quantum = Quantum;
+    }
     public Process(int Number, int ArrivalTime, int BurstTime, int Priority) {
         this.Number = Number;
         this.ArrivalTime = ArrivalTime;
         this.Priority = Priority;
         this.BurstTime = BurstTime;
-    }
+        }
     //getters
     public int getNumber() {
         return Number;
@@ -23,7 +31,10 @@ public class Process {
     public int getBurstTime() {
         return BurstTime;
     }
-
+    
+    public int getQuantum() {
+        return Quantum;
+    }
     //setters
     public void setNumber(int Number) {
         this.Number = Number;
@@ -37,4 +48,10 @@ public class Process {
     public void setBurstTime(int BurstTime) {
         this.BurstTime = BurstTime;
     }
+    public void setQuantum(int Quantum) { 
+        this.Quantum = Quantum;
+    }
+    // public void update(,int time){
+    //     this.Quantum = this.Quantum -time ;
+    // }
 }

@@ -3,7 +3,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class RR {
-    public Queue<Pair<Process, Integer>> run(ArrayList<Process> PD, int RRTQ, int ContextSwitch) {
+    public ArrayList<Pair<Process, Integer>> Sort(ArrayList<Process> PD, int RRTQ, int ContextSwitch) {
         // create queue of pair
         Queue<Pair<Process, Integer>>  q2 = new LinkedList<Pair<Process, Integer>> ();
         Queue<Process> q = new LinkedList<Process>();
@@ -40,8 +40,11 @@ public class RR {
                 q2.add(tmp);
             }
         }
-        return q2;
-
+        ArrayList<Pair<Process, Integer>> tmp = new ArrayList<Pair<Process, Integer>>();
+        while(!q2.isEmpty()){
+            tmp.add(q2.poll());
+        }
+        return tmp;
     }
 
     public int avgWaitTimeRR(Queue<Pair<Process, Integer>> l, int n) {

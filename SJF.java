@@ -6,9 +6,7 @@ public class SJF {
         // deep copy PD into tPD
         ArrayList<Pair<Process, Integer>> retP = new ArrayList<Pair<Process, Integer>>();
         ArrayList<Process> tPD = new ArrayList<Process>();
-        for (int i = 0; i < PD.size(); i++) {
-            tPD.add(PD.get(i));
-        }
+        tPD = prog.DeepCopy(PD); 
         // Sorting on Burst Time
         for (int i = 0; i < tPD.size(); i++) {
             for (int j = 0; j < tPD.size(); j++) {
@@ -113,4 +111,36 @@ public class SJF {
             return burstTime2;
         }
     }
+
+static void findWaitingTime(ArrayList<Pair<Process, Integer>> proc,ArrayList<Process> PD){
+        
+        ArrayList<Process> tPD = new ArrayList<Process>();
+        
+        tPD = prog.DeepCopy(PD);
+        // for(int i=0; i<proc.size(); i++){
+        //     proc.get(i).setFirst(p.get(i).First());
+        //     proc.get(i).setSecond(p.get(i).Second());
+
+        // }
+        
+        int waitTime[]=new int[tPD.size()];
+        int m[]=new int[tPD.size()];
+        for(int i=0; i<tPD.size(); i++){
+           m[i]=-1;
+          
+        }
+        for(int i = proc.size()-1; i > 0 ; i--){
+           
+            if(m[proc.get(i).First().getNumber()-1]!= 0){
+                waitTime[proc.get(i).First().getNumber()-1] = proc.get(i).Second() - PD.get(proc.get(i).First().getNumber()-1).getBurstTime()-PD.get(proc.get(i).First().getNumber()-1).getArrivalTime();
+                m[proc.get(i).First().getNumber()-1] = 0;
+                
+            }
+              
+        }
+        for(int i = 0; i < waitTime.length; i++){
+            System.out.println("Process no."+tPD.get(i).getNumber()+" waitTime = " + waitTime[i]);
+        }
+    }
 }
+    

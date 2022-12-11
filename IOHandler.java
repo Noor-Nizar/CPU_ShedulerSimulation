@@ -20,8 +20,10 @@ public class IOHandler {
         System.out.println("Input From File or Console? (F/C)");
         String input = sci.nextLine();
         if(input.equals("F")){
-            System.out.println("Enter the filename: ");
+            System.out.println("Enter the filename (or enter for default): ");
             filename = sci.nextLine();
+            if(filename.equals(""))
+                filename = "input.txt"; // default filename
             mode = 1;
         }
         else{
