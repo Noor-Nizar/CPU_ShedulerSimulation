@@ -22,8 +22,13 @@ public class AG {
             }
         }
         int dbg = tPD.size();
+        cuProcess = tPD.get(0);
         // ArrayList<Process> tPD_Next = prog.DeepCopy(tPD);
         while (tPD.size() > 0) {
+            int Q = cuProcess.getQuantum();
+            int Q25 = (int) Math.ceil(Q * 0.25);
+            int Q25nd = (int) Math.ceil((Q - Q25) * 0.25);
+            int RQ = Q - Q25 - Q25nd;
 
             for (int i = 0; i < tPD.size(); i++) {
                 for (int j = 0; j < tPD.size(); j++) {
@@ -34,185 +39,136 @@ public class AG {
                     }
                 }
             }
-            cuProcess = tPD.get(0);
-            int nxtTime = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.25), cuProcess.getBurstTime());
+            // cuProcess = tPD.get(0);
+            int nxtTime = Math.min(Q25, cuProcess.getBurstTime());
             time += nxtTime;
             cuProcess.setBurstTime(cuProcess.getBurstTime() - nxtTime);
             pExecOrder.add(new Pair<Process, Integer>(cuProcess, time));
             if (cuProcess.getBurstTime() == 0) {
-                tPD.remove(0);
+                tPD.remove(cuProcess);
+                if (tPD.size() == 0) {
+                    break;
+                }
+                cuProcess = tPD.get(0);
                 continue;
             }
 
-            int jBest = 0;
-            for (int j = 1; j < tPD.size(); j++) {
+            Process jBest = cuProcess;
+            for (int j = 0; j < tPD.size(); j++) {
 
                 if (tPD.get(j).getArrivalTime() <= time) {
-                    if (cuProcess.getPriority() > tPD.get(j).getPriority()) {
-                        jBest = j;
-                        break;
+                    if (jBest.getPriority() > tPD.get(j).getPriority()) {
+                        jBest = tPD.get(j);
+                        // break;
                     }
                 }
             }
 
             int avwt = 0;
-            if (jBest == 0) {
+            if (jBest == cuProcess) {
                 avwt = cuProcess.getBurstTime();
             } else {
-                avwt = Math.max(tPD.get(jBest).getArrivalTime() - time, 0);
+                avwt = Math.max(jBest.getArrivalTime() - time, 0);
             }
             
-            int workTimeNPP = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.25), avwt);
+            int workTimeNPP = Math.min(Q25nd, avwt);
             workTimeNPP = Math.min(workTimeNPP, cuProcess.getBurstTime());
-
-            pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + workTimeNPP));
-
-            if (workTimeNPP == cuProcess.getBurstTime()) {
-                tPD.remove(0);
-                continue;
-            }
-
-            if (workTimeNPP == avwt) {
-                Process tmp = new Process(cuProcess.getNumber(), cuProcess.getArrivalTime() + time + workTimeNPP,
-                cuProcess.getBurstTime() - workTimeNPP, cuProcess.getPriority(),
-                cuProcess.getQuantum() + (int) Math.ceil(cuProcess.getQuantum() * 0.75 / 2 - workTimeNPP / 2));
-                tPD.add(tmp);
-                tPD.remove(0);
-                continue;
-            }
-            
-
-            cuProcess.setBurstTime(cuProcess.getBurstTime() - workTimeNPP);
             time += workTimeNPP;
+            pExecOrder.add(new Pair<Process, Integer>(cuProcess, time));
+            
+            if (workTimeNPP == cuProcess.getBurstTime()) {
+                tPD.remove(cuProcess);
+                if (tPD.size() == 0) {
+                    break;
+                }
+                cuProcess = tPD.get(0);
+                continue;
+            }
+            cuProcess.setBurstTime(cuProcess.getBurstTime() - workTimeNPP);
+            if (workTimeNPP == avwt) {
+                Process tmp = new Process(cuProcess.getNumber(), cuProcess.getArrivalTime() + time,
+                        cuProcess.getBurstTime(), cuProcess.getPriority(),
+                        cuProcess.getQuantum() + (int) Math.ceil((Q25nd - workTimeNPP) / 2));
+                tPD.remove(cuProcess);
+                cuProcess = jBest;
+                tPD.add(tmp);
+                
+                continue;
+            }
 
+            // cuProcess.setBurstTime(cuProcess.getBurstTime() - workTimeNPP);
+            // time += workTimeNPP;
 
-
-            int nextLeast = 0;
-            for (int j = 1; j < tPD.size(); j++) {
+            Process nextLeastInTime = cuProcess;
+            for (int j = 0; j < tPD.size(); j++) {
                 // int tdiffj = tPD.get(j).getArrivalTime() - time;
-                int tdiff = Math.max(tPD.get(j).getArrivalTime() - time, 0);
-                if (cuProcess.getBurstTime() > tPD.get(j).getBurstTime() + tdiff) {
-                    nextLeast = j;
+                if (tPD.get(j).getArrivalTime() <= time) {
+                    if (nextLeastInTime.getBurstTime() > tPD.get(j).getBurstTime()) {
+                        nextLeastInTime = tPD.get(j);
+                    }
                 }
             }
-            int WorkTime;
-            if (nextLeast != 0) {
-                int ttnxt = Math.max(tPD.get(nextLeast).getArrivalTime() - time, 0);
-                int ttmp = Math.min(ttnxt, cuProcess.getBurstTime());
-                if (ttmp == cuProcess.getBurstTime()) {
-                    pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + ttmp));
-                    tPD.remove(0);
-                    continue;
+            Process nextLeastOutTime = cuProcess;
+            if (nextLeastInTime == cuProcess) {
+                for (int j = 0; j < tPD.size(); j++) {
+                    // int tdiffj = tPD.get(j).getArrivalTime() - time;
+                    int tdiff = Math.max(tPD.get(j).getArrivalTime() - time, 0);
+                    if (cuProcess.getBurstTime() > tPD.get(j).getBurstTime() + tdiff) {
+                        nextLeastOutTime = tPD.get(j);
+                        break;
+                    }
                 }
-                WorkTime = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.5), ttmp);
-                pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + WorkTime));
-
-                cuProcess.setBurstTime(cuProcess.getBurstTime() - WorkTime);
-                cuProcess.setArrivalTime(cuProcess.getArrivalTime() + WorkTime + time);
-                if (WorkTime == ttmp) {
-                    Process tmp = new Process(cuProcess.getNumber(), cuProcess.getArrivalTime(),
-                            cuProcess.getBurstTime(), cuProcess.getPriority(),
-                            cuProcess.getQuantum() + (int) Math.ceil(cuProcess.getQuantum() * 0.5 - WorkTime));
-                    tPD.add(tmp);
-                    tPD.remove(0);
-                    continue;
-                } else {
-                    noQuantum(tPD);
-                }
+            }
+            Process nextProc;
+            if(nextLeastInTime == cuProcess){
+                nextProc = nextLeastOutTime;
+            }else{
+                nextProc = nextLeastInTime;
+            }
+            int avwt2 = 0;
+            if (nextProc != cuProcess) {
+                avwt2 = Math.max(nextProc.getArrivalTime() - time, 0);
             } else {
-                WorkTime = Math.min(cuProcess.getBurstTime(), (int) Math.ceil(cuProcess.getQuantum() * 0.5));
-                pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + WorkTime));
-                if (WorkTime == cuProcess.getBurstTime()) {
-                    // pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + WorkTime));
-                    tPD.remove(0);
-                    continue;
-                } else {
-                    cuProcess.setBurstTime(cuProcess.getBurstTime() - WorkTime);
-                    cuProcess.setArrivalTime(cuProcess.getArrivalTime() + WorkTime + time);
-                    noQuantum(tPD);
-                }
+                avwt2 = cuProcess.getBurstTime();
             }
+            int remQuantum = RQ;
+            int WorkTime = Math.min(avwt2, remQuantum);
             time += WorkTime;
+            cuProcess.setBurstTime(cuProcess.getBurstTime() - WorkTime);
+            cuProcess.setArrivalTime(cuProcess.getArrivalTime() + time);
+
+            pExecOrder.add(new Pair<Process, Integer>(cuProcess, time));
+            if (workTimeNPP == cuProcess.getBurstTime()) {
+                tPD.remove(cuProcess);
+                if (tPD.size() == 0) {
+                    break;
+                }
+                cuProcess = tPD.get(0);
+                continue;
+            }
+            if (WorkTime == remQuantum) {
+                noQuantum(tPD, cuProcess);
+                cuProcess = tPD.get(0);
+                continue;
+            }
+            if (WorkTime == avwt2) {
+                Process tmp = new Process(cuProcess.getNumber(), cuProcess.getArrivalTime(),
+                        cuProcess.getBurstTime(), cuProcess.getPriority(),
+                        cuProcess.getQuantum() + (int) Math.ceil(RQ - WorkTime));
+                tPD.remove(cuProcess);
+                tPD.add(tmp);
+                cuProcess = nextProc;
+                continue;
+            }
         }
         return pExecOrder;
     }
 
-    void noQuantum(ArrayList<Process> tPD) {
+    void noQuantum(ArrayList<Process> tPD, Process cuProcess) {
         Process tmp = new Process(tPD.get(0).getNumber(), tPD.get(0).getArrivalTime(), tPD.get(0).getBurstTime(),
                 tPD.get(0).getPriority(), tPD.get(0).getQuantum() + 2);
+        tPD.remove(cuProcess);
         tPD.add(tmp);
-        tPD.remove(0);
     }
 
 }
-// 1-Check arrivial process
-// 2-if no process is run (Start of program or process has done job) set current
-// process to be head of queue
-// 3-run current process 25% of its quantum time
-// 4-Check arrivial process
-// 5-check if current process has highest priority if yes continue if no set
-// current process to be higest priority process then back to step 1
-// 6-run current process 25% of its quantum time (correct formual is ceil(50% of
-// it quantum time - 25% of its quantum time) to get value like 10 right)
-// 7-Check arrivial process
-// 8-check if current process has lowest burst time if yes continue if no set
-// current process to be shortest job then back to step 1
-// 9-run current process 50% of its quantum time (remeber it is preemptive so
-// step 8 must be repeated)
-
-// public static void runAGScheduling(List<Process> processes) {
-// // Sort the list of processes in ascending order of their arrival time
-// Collections.sort(processes);
-
-// // Run the processes in the list
-// while (!processes.isEmpty()) {
-// Process currProcess = processes.remove(0);
-// int quantum = currProcess.getQuantum();
-
-// // Execute the process as FCFS until 25% of its quantum time has been reached
-// int timeElapsed = 0;
-// while (timeElapsed < quantum * 0.25) {
-// // Execute the process for 1 time unit
-// currProcess.execute();
-// timeElapsed++;
-
-// // If the process has completed, move on to the next process
-// if (currProcess.isCompleted()) {
-// break;
-// }
-// }
-
-// // If the process has not completed, add it to the end of the list and
-// increase its quantum time by 2
-// if (!currProcess.isCompleted()) {
-// currProcess.setQuantum(quantum + 2);
-// processes.add(currProcess);
-
-// // Execute the process as non-preemptive priority until 50% of its quantum
-// time has been reached
-// while (timeElapsed < quantum * 0.5) {
-// // Execute the process for 1 time unit
-// currProcess.execute();
-// timeElapsed++;
-
-// // If the process has completed, move on to the next process
-// if (currProcess.isCompleted()) {
-// break;
-// }
-// }
-// }
-
-// // If the process has not completed, add it to the end of the list and
-// increase its quantum time by 50% of the remaining quantum time
-// if (!currProcess.isCompleted()) {
-// currProcess.setQuantum((int) Math.ceil((quantum - timeElapsed) / 2.0));
-// processes.add(currProcess);
-
-// // Execute the process as preemptive shortest-job first until it completes
-// while (!currProcess.isCompleted()) {
-// // Execute the process for 1 time unit
-// currProcess.execute();
-// }
-// }
-// }
-// }
