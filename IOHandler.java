@@ -39,7 +39,8 @@ public class IOHandler {
             int ArrivalTime = Integer.parseInt(tokens[1]);
             int BurstTime = Integer.parseInt(tokens[2]);
             int Priority = Integer.parseInt(tokens[3]);
-            Process tmp = new Process(Number, ArrivalTime, BurstTime, Priority);
+            int Quantum = Integer.parseInt(tokens[4]);
+            Process tmp = new Process(Number, ArrivalTime, BurstTime, Priority, Quantum);
             retP.add(tmp);
         }
         sc.close();
@@ -54,7 +55,9 @@ public class IOHandler {
             int BurstTime = sci.nextInt();
             System.out.println("Enter the Process Priority: ");
             int Priority = sci.nextInt();
-            Process tmp = new Process(Number, ArrivalTime, BurstTime, Priority);
+            System.out.println("Enter the Process Quantum: ");
+            int Quantum = sci.nextInt();
+            Process tmp = new Process(Number, ArrivalTime, BurstTime, Priority, Quantum);
             PD.add(tmp);
         }
         sci.close();
@@ -76,6 +79,11 @@ public class IOHandler {
     public static void PDprinter(ArrayList<Process> PD) {
         for (int i = 0; i < PD.size(); i++) {
             System.out.println("Process Number: " + PD.get(i).getNumber() + " Arrival Time: " + PD.get(i).getArrivalTime() + " Burst Time: " + PD.get(i).getBurstTime() + " Priority: " + PD.get(i).getPriority());
+        }
+    }
+    public static void PEOprinter(ArrayList<Pair<Process, Integer>> PEO) {
+        for (int i = 0; i < PEO.size(); i++) {
+            System.out.println("Process Number: " + PEO.get(i).First().getNumber() + "End Time: " + PEO.get(i).Second());
         }
     }
 }

@@ -31,3 +31,8 @@ Process Number: 2 End Time: 7
 Process Number: 4 End Time: 10
 Process Number: 1 End Time: 15
 --------------------------------------------->
+
+1 0 7 0
+2 2 4 0
+3 4 1 0
+4 5 4 0

@@ -9,6 +9,7 @@ public class prog {
     static SJF sjf = new SJF();
     static RR rr = new RR();
     static PS ps = new PS();
+    static AG ag = new AG();
 
     static IOHandler io;
 
@@ -31,16 +32,17 @@ public class prog {
         // System.out.println("ArrivalTime: "+mPD.get(i).getArrivalTime());
         // System.out.println("--------------------");
         // }
-        ArrayList<Pair<Process, Integer>> sjfP = sjf.Sort(PD, ContextSwitch);
+        // ArrayList<Pair<Process, Integer>> sjfP = sjf.Sort(PD, ContextSwitch);
+        // ArrayList<Pair<Process, Integer>> rrP = rr.Sort(DeepCopy(PD), RRTQ, ContextSwitch);
+        // ArrayList<Pair<Process, Integer>> psP = ps.Sort(DeepCopy(PD), ContextSwitch, AgeTime);
+        ArrayList<Pair<Process, Integer>> agP = ag.Sort(PD);
 
-        Time.findWaitingTime(sjfP, PD);
+        // Time.findWaitingTime(sjfP, PD);
 
-        // for (int i = 0; i < sjfP.size(); i++) {
-        // System.out.println("Process Number: " + sjfP.get(i).First().getNumber() + "
-        // End Time: " + sjfP.get(i).Second());
-        // }
-        System.out.println("Wait Times: " + Time.findWaitingTime(sjfP, PD));
-        System.out.println("AvgWaitTime: " + Time.AvgWaitTime(Time.findWaitingTime(sjfP, PD)));
+        IOHandler.PEOprinter(agP);
+
+        // System.out.println("Wait Times: " + Time.findWaitingTime(agP, PD));
+        // System.out.println("AvgWaitTime: " + Time.AvgWaitTime(Time.findWaitingTime(agP, PD)));
 
     }
 

@@ -6,11 +6,11 @@ import java.lang.Math;
 public class AG {
     public int time = 0;
 
-    public ArrayList<Pair<Process, Integer>> run(ArrayList<Process> PD) {
+    public ArrayList<Pair<Process, Integer>> Sort(ArrayList<Process> PD) {
 
         ArrayList<Pair<Process, Integer>> pExecOrder = new ArrayList<Pair<Process, Integer>>();
         Process cuProcess;
-        Process prev;
+        // Process prev;
         ArrayList<Process> tPD = prog.DeepCopy(PD);
         for (int i = 0; i < tPD.size(); i++) {
             for (int j = 0; j < tPD.size(); j++) {
@@ -21,10 +21,10 @@ public class AG {
                 }
             }
         }
-        cuProcess = tPD.get(0);
-        int dbg = 5;
-        ArrayList<Process> tPD_Next = prog.DeepCopy(tPD);
-        while (dbg-- > 0) {
+        int dbg = tPD.size();
+        // ArrayList<Process> tPD_Next = prog.DeepCopy(tPD);
+        while (tPD.size() > 0) {
+            
             for (int i = 0; i < tPD.size(); i++) {
                 for (int j = 0; j < tPD.size(); j++) {
                     if (tPD.get(i).getArrivalTime() < tPD.get(j).getArrivalTime()) {
@@ -34,102 +34,105 @@ public class AG {
                     }
                 }
             }
-
+            cuProcess = tPD.get(0);
             int nxtTime = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.25), cuProcess.getBurstTime());
             time += nxtTime;
             cuProcess.setBurstTime(cuProcess.getBurstTime() - nxtTime);
+            if (cuProcess.getBurstTime() == 0) {
+                pExecOrder.add(new Pair<Process, Integer>(cuProcess, time));
+                tPD.remove(0);
+                continue;
+            }
 
-            int jBest = -1; // the best process to run that has arrived so far
-            int jnout = -1; // the process tht is arriving next
-            int First = -1; // if not -1 then there are still processes to run
-
-            for (int j = 0; j < tPD.size(); j++) {
-                if (tPD.get(j).getBurstTime() == 0) {
-                    continue;
-                } else {
-                    if (First == -1) {
-                        First = j;
-                    }
-                }
+            int jBest = 0; 
+            for (int j = 1; j < tPD.size(); j++) {
 
                 if (tPD.get(j).getArrivalTime() <= time) {
-                    if (jBest == -1) {
+                    if (cuProcess.getPriority() > tPD.get(j).getPriority()) {
                         jBest = j;
-                    } else {
-                        if (tPD.get(j).getPriority() < tPD.get(jBest).getPriority()) {
-                            jBest = j;
-                        }
-                    }
-                } else {
-                    if (jnout == -1) {
-                        jnout = j;
+                        break;
                     }
                 }
             }
-            prev = cuProcess;
-            cuProcess = tPD.get(jBest);
-            if (prev.getNumber() == cuProcess.getNumber()) {
-                time += (int) Math.ceil(cuProcess.getQuantum() * 0.5 - cuProcess.getQuantum() * 0.25);
-                cuProcess.setBurstTime(cuProcess.getBurstTime() - (int) Math.ceil(cuProcess.getQuantum() * 0.25));
-                jBest = -1; // the best process to run that has arrived so far
-                jnout = -1; // the process tht is arriving next
-                First = -1;
-                for (int j = 0; j < tPD.size(); j++) {
-                    if (tPD.get(j).getBurstTime() == 0) {
-                        continue;
-                    } else {
-                        if (First == -1) {
-                            First = j;
-                        }
-                    }
-
-                    if (tPD.get(j).getArrivalTime() <= time) {
-                        if (jBest == -1) {
-                            jBest = j;
-                        } else {
-                            if (tPD.get(j).getBurstTime() < tPD.get(jBest).getBurstTime()) {
-                                jBest = j;
-                            }
-                        }
-                    } else {
-                        if (jnout == -1) {
-                            jnout = j;
-                        }
-                    }
-
-                }
-                prev = cuProcess;
-                cuProcess = tPD.get(jBest);
-                if (prev.getNumber() == cuProcess.getNumber()) {
-
-                    int nextLeast = 0;
-                    for (int j = 1; j < tPD.size(); j++) {
-                        // int tdiffj = tPD.get(j).getArrivalTime() - time;
-                        int tdiff = tPD.get(j).getArrivalTime() - time;
-                        if (cuProcess.getBurstTime() > tPD.get(j).getBurstTime() + tdiff) {
-                            nextLeast = j;
-                        }
-                    }
-                    int WorkTime;
-                    if (nextLeast != 0) {
-                        WorkTime = Math.min(tPD.get(nextLeast).getArrivalTime() - time, cuProcess.getBurstTime());
-                        cuProcess.setBurstTime(cuProcess.getBurstTime() - WorkTime);
-                        // add process to end of..
-                    } else {
-                        WorkTime = cuProcess.getBurstTime();
-                        cuProcess.setBurstTime(0);
-                        // remove process From add it to 
-                        pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + WorkTime));
-                    }
-                    time += WorkTime;
-                } else {
+            int workTimeNPP = 0;
+            if (jBest == 0) {
+                workTimeNPP = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.25), cuProcess.getBurstTime());
+                if (workTimeNPP == cuProcess.getBurstTime()) {
+                    pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + workTimeNPP));
+                    tPD.remove(0);
                     continue;
                 }
             } else {
-                continue;
+                int ttmp = Math.min(tPD.get(jBest).getArrivalTime() - time, cuProcess.getBurstTime());
+                if (ttmp == cuProcess.getBurstTime()) {
+                    pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + cuProcess.getBurstTime()));
+                    tPD.remove(0);
+                    continue;
+                }
+                workTimeNPP = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.25), ttmp);
+                if (workTimeNPP == ttmp) {
+                    Process tmp = new Process(cuProcess.getNumber(), cuProcess.getArrivalTime() + time + workTimeNPP,
+                            cuProcess.getBurstTime() - workTimeNPP, cuProcess.getPriority(),
+                            cuProcess.getQuantum() + (int) Math.ceil(cuProcess.getQuantum() / 2 - ttmp / 2));
+                    tPD.add(tmp);
+                    tPD.remove(0);
+                    continue;
+                }
             }
+            cuProcess.setBurstTime(cuProcess.getBurstTime() - workTimeNPP);
+            time += workTimeNPP;
+            int nextLeast = 0;
+            for (int j = 1; j < tPD.size(); j++) {
+                // int tdiffj = tPD.get(j).getArrivalTime() - time;
+                int tdiff = Math.max(tPD.get(j).getArrivalTime() - time, 0);
+                if (cuProcess.getBurstTime() > tPD.get(j).getBurstTime() + tdiff) {
+                    nextLeast = j;
+                }
+            }
+            int WorkTime;
+            if (nextLeast != 0) {
+                int ttnxt = Math.max(tPD.get(nextLeast).getArrivalTime() - time,0);
+                int ttmp = Math.min(ttnxt, cuProcess.getBurstTime());
+                if (ttmp == cuProcess.getBurstTime()) {
+                    pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + ttmp));
+                    tPD.remove(0);
+                    continue;
+                }
+                WorkTime = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.5), ttmp);
+                cuProcess.setBurstTime(cuProcess.getBurstTime() - WorkTime);
+                cuProcess.setArrivalTime(cuProcess.getArrivalTime() + WorkTime + time);
+                if (WorkTime == ttmp) {
+                    Process tmp = new Process(cuProcess.getNumber(), cuProcess.getArrivalTime(),
+                            cuProcess.getBurstTime(), cuProcess.getPriority(),
+                            cuProcess.getQuantum() + (int) Math.ceil(cuProcess.getQuantum() - WorkTime));
+                    tPD.add(tmp);
+                    tPD.remove(0);
+                    continue;
+                } else {
+                    noQuantum(tPD);
+                }
+            } else {
+                WorkTime = Math.min(cuProcess.getBurstTime(), (int) Math.ceil(cuProcess.getQuantum() * 0.5));
+                if(WorkTime == cuProcess.getBurstTime()){
+                    pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + WorkTime));
+                    tPD.remove(0);
+                    continue;
+                }else{
+                    cuProcess.setBurstTime(cuProcess.getBurstTime() - WorkTime);
+                    cuProcess.setArrivalTime(cuProcess.getArrivalTime() + WorkTime + time);
+                    noQuantum(tPD);
+                }
+            }
+            time += WorkTime;
         }
-        return null;
+        return pExecOrder;
+    }
+
+    void noQuantum(ArrayList<Process> tPD) {
+        Process tmp = new Process(tPD.get(0).getNumber(), tPD.get(0).getArrivalTime(), tPD.get(0).getBurstTime(),
+                tPD.get(0).getPriority(), tPD.get(0).getQuantum() + 2);
+        tPD.add(tmp);
+        tPD.remove(0);
     }
 }
 // 1-Check arrivial process
