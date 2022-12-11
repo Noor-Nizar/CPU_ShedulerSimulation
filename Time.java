@@ -63,3 +63,31 @@ public class Time {
         }
         return tat;
     }
+    
+
+
+    public static Double AvgTime(ArrayList<Integer> Times){
+        Double avg = 0.0;
+        for(int i=0; i<Times.size(); i++){
+            avg += Times.get(i);
+        }
+        avg = avg/Times.size();
+        return avg;
+    }
+    // public static Double AvgWaitTime(ArrayList<Integer> waitTimes){
+    //     Double avgWaitTime = 0.0;
+    //     for(int i=0; i<waitTimes.size(); i++){
+    //         avgWaitTime += waitTimes.get(i);
+    //     }
+    //     avgWaitTime = avgWaitTime/waitTimes.size();
+    //     return avgWaitTime;
+    // }
+    // public static Double AvgTAT(ArrayList<Integer> TATTimes){
+    //     Double avgTAT = 0.0;
+    //     for(int i=0; i<TATTimes.size(); i++){
+    //         avgTAT += TATTimes.get(i);
+    //     }
+    //     avgTAT = avgTAT/TATTimes.size();
+    //     return avgTAT;
+    // }
+}   
