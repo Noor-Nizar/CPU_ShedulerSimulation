@@ -9,9 +9,7 @@ public class PS {
         ArrayList<Process> tPD = new ArrayList<Process>();
 
         ArrayList<Integer> initialPriority = new ArrayList<Integer>();
-        for (int i = 0; i < PD.size(); i++) {
-            tPD.add(PD.get(i));
-        }
+        tPD = prog.DeepCopy(PD);
         // Sorting on Burst Time
         for (int i = 0; i < tPD.size(); i++) {
             for (int j = 0; j < tPD.size(); j++) {
