@@ -38,8 +38,8 @@ public class AG {
             int nxtTime = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.25), cuProcess.getBurstTime());
             time += nxtTime;
             cuProcess.setBurstTime(cuProcess.getBurstTime() - nxtTime);
+            pExecOrder.add(new Pair<Process, Integer>(cuProcess, time));
             if (cuProcess.getBurstTime() == 0) {
-                pExecOrder.add(new Pair<Process, Integer>(cuProcess, time));
                 tPD.remove(0);
                 continue;
             }
@@ -57,28 +57,37 @@ public class AG {
             int workTimeNPP = 0;
             if (jBest == 0) {
                 workTimeNPP = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.25), cuProcess.getBurstTime());
+                pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + workTimeNPP));
                 if (workTimeNPP == cuProcess.getBurstTime()) {
-                    pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + workTimeNPP));
                     tPD.remove(0);
                     continue;
                 }
             } else {
                 int ttmp = Math.min(tPD.get(jBest).getArrivalTime() - time, cuProcess.getBurstTime());
+                workTimeNPP = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.25), ttmp);
+
                 if (ttmp == cuProcess.getBurstTime()) {
                     pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + cuProcess.getBurstTime()));
                     tPD.remove(0);
                     continue;
                 }
-                workTimeNPP = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.25), ttmp);
+                pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + workTimeNPP));
                 if (workTimeNPP == ttmp) {
                     Process tmp = new Process(cuProcess.getNumber(), cuProcess.getArrivalTime() + time + workTimeNPP,
                             cuProcess.getBurstTime() - workTimeNPP, cuProcess.getPriority(),
-                            cuProcess.getQuantum() + (int) Math.ceil(cuProcess.getQuantum() / 2 - ttmp / 2));
+                            cuProcess.getQuantum() + (int) Math.ceil(cuProcess.getQuantum()*0.75 / 2 - ttmp / 2));
                     tPD.add(tmp);
                     tPD.remove(0);
                     continue;
                 }
             }
+
+
+
+
+
+
+            
             cuProcess.setBurstTime(cuProcess.getBurstTime() - workTimeNPP);
             time += workTimeNPP;
             int nextLeast = 0;
@@ -99,12 +108,14 @@ public class AG {
                     continue;
                 }
                 WorkTime = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.5), ttmp);
+                pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + WorkTime));
+                
                 cuProcess.setBurstTime(cuProcess.getBurstTime() - WorkTime);
                 cuProcess.setArrivalTime(cuProcess.getArrivalTime() + WorkTime + time);
                 if (WorkTime == ttmp) {
                     Process tmp = new Process(cuProcess.getNumber(), cuProcess.getArrivalTime(),
                             cuProcess.getBurstTime(), cuProcess.getPriority(),
-                            cuProcess.getQuantum() + (int) Math.ceil(cuProcess.getQuantum() - WorkTime));
+                            cuProcess.getQuantum() + (int) Math.ceil(cuProcess.getQuantum()*0.5 - WorkTime));
                     tPD.add(tmp);
                     tPD.remove(0);
                     continue;
@@ -113,8 +124,9 @@ public class AG {
                 }
             } else {
                 WorkTime = Math.min(cuProcess.getBurstTime(), (int) Math.ceil(cuProcess.getQuantum() * 0.5));
+                pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + WorkTime));
                 if(WorkTime == cuProcess.getBurstTime()){
-                    pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + WorkTime));
+                    // pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + WorkTime));
                     tPD.remove(0);
                     continue;
                 }else{
@@ -134,6 +146,7 @@ public class AG {
         tPD.add(tmp);
         tPD.remove(0);
     }
+
 }
 // 1-Check arrivial process
 // 2-if no process is run (Start of program or process has done job) set current
