@@ -5,7 +5,7 @@ import java.util.Queue;
 public class RR {
     public ArrayList<Pair<Process, Integer>> Sort(ArrayList<Process> PD, int RRTQ, int ContextSwitch) {
         // create queue of pair
-        Queue<Pair<Process, Integer>>  q2 = new LinkedList<Pair<Process, Integer>> ();
+        Queue<Pair<Process, Integer>> q2 = new LinkedList<Pair<Process, Integer>>();
         Queue<Process> q = new LinkedList<Process>();
 
         for (int i = 0; i < PD.size(); i++) {
@@ -41,7 +41,7 @@ public class RR {
             }
         }
         ArrayList<Pair<Process, Integer>> tmp = new ArrayList<Pair<Process, Integer>>();
-        while(!q2.isEmpty()){
+        while (!q2.isEmpty()) {
             tmp.add(q2.poll());
         }
         return tmp;
@@ -52,7 +52,7 @@ public class RR {
         int lastCounter = 0;
         for (int j = 0; j < n; j++) {
             for (int i = 0; i < l.size(); i++) {
-                if(l.poll().First().getNumber() == j){
+                if (l.poll().First().getNumber() == j) {
                     lastCounter = j;
                 }
             }

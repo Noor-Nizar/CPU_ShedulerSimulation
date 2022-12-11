@@ -56,10 +56,9 @@ public class PS {
                     int tdiff = Math.max(counter - tPD.get(j).getArrivalTime(), 0);
                     if (tPD.get(j).getPriority() > 0) {
                         tPD.get(j).setPriority(Math.max(initialPriority.get(j)
-                                - (int) Math.floor(tdiff / AgeTime)
-                                , 0));
+                                - (int) Math.floor(tdiff / AgeTime), 0));
                     }
-                    //+ (int) Math.floor(Math.max(tdiff - 1, 0)/ AgeTime)
+                    // + (int) Math.floor(Math.max(tdiff - 1, 0)/ AgeTime)
                     if (jBest == -1) {
                         jBest = j;
                     } else {
