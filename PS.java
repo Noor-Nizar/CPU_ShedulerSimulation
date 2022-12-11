@@ -1,11 +1,14 @@
 import java.util.ArrayList;
+import java.math.*;
 
 public class PS {
 
-    public ArrayList<Pair<Process, Integer>> Sort(ArrayList<Process> PD, int ContextSwitch) {
+    public ArrayList<Pair<Process, Integer>> Sort(ArrayList<Process> PD, int ContextSwitch, int AgeTime) {
         // deep copy PD into tPD
         ArrayList<Pair<Process, Integer>> retP = new ArrayList<Pair<Process, Integer>>();
         ArrayList<Process> tPD = new ArrayList<Process>();
+
+        ArrayList<Integer> initialPriority = new ArrayList<Integer>();
         for (int i = 0; i < PD.size(); i++) {
             tPD.add(PD.get(i));
         }
@@ -29,6 +32,9 @@ public class PS {
                 }
             }
         }
+        for (int i = 0; i < tPD.size(); i++) {
+            initialPriority.add(tPD.get(i).getPriority());
+        }
         int counter = 0; // represents Time
         int dbg = 5; // debug counter
         int retpCounter = -1;
@@ -46,6 +52,14 @@ public class PS {
                 }
 
                 if (tPD.get(j).getArrivalTime() <= counter) {
+                    // aging
+                    int tdiff = Math.max(counter - tPD.get(j).getArrivalTime(), 0);
+                    if (tPD.get(j).getPriority() > 0) {
+                        tPD.get(j).setPriority(Math.max(initialPriority.get(j)
+                                - (int) Math.floor(tdiff / AgeTime)
+                                , 0));
+                    }
+                    //+ (int) Math.floor(Math.max(tdiff - 1, 0)/ AgeTime)
                     if (jBest == -1) {
                         jBest = j;
                     } else {
@@ -82,11 +96,10 @@ public class PS {
             counter += maxgw;
 
             if (ContextSwitch > 0) {
-                if(tPD.get(jBest).getBurstTime() == 0){
+                if (tPD.get(jBest).getBurstTime() == 0) {
                     retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter + ContextSwitch));
                     counter += ContextSwitch;
-                }
-                else if (jnout != -1) {
+                } else if (jnout != -1) {
                     if (tPD.get(jBest).getPriority() > tPD.get(jnout).getPriority()) {
                         retP.add(new Pair<Process, Integer>(new Process(-1, 0, 0, 0), counter + ContextSwitch));
                         counter += ContextSwitch;
@@ -94,15 +107,15 @@ public class PS {
                 }
             }
             // Debugging
-            // System.out.println("counter: " + counter);
+            System.out.println("counter: " + counter);
             // System.out.println("First: " + First);
             // System.out.println("jBest: " + jBest);
             // System.out.println("--------------------");
-            // prog.PDprinter(tPD);
+            IOHandler.PDprinter(tPD);
             // System.out.println("--------------------");
         }
 
-        if(ContextSwitch > 0){
+        if (ContextSwitch > 0) {
             retP.remove(retP.size() - 1);
         }
         return retP;
