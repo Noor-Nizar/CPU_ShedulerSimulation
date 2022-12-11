@@ -10,7 +10,10 @@ public class prog {
     static RR rr = new RR();
     static PS ps = new PS();
     
-    static IOHandler io;    
+
+    static IOHandler io;
+    
+    static int AgeTime = 1; // << !!!!!!!!!
 
     public static void main(String[] args) {
         ArrayList<Process> PD = new ArrayList<Process>();
@@ -32,6 +35,7 @@ public class prog {
         ArrayList<Pair<Process, Integer>> sjfP = sjf.Sort(PD, ContextSwitch);
         
         Time.findWaitingTime(sjfP,PD);
+
         // // Queue<Pair> sjfP = rr.run(PD, RRTQ, ContextSwitch);
         // System.out.println("SJF");
         for (int i = 0; i < sjfP.size(); i++) {
