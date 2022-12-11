@@ -24,7 +24,7 @@ public class AG {
         int dbg = tPD.size();
         // ArrayList<Process> tPD_Next = prog.DeepCopy(tPD);
         while (tPD.size() > 0) {
-            
+
             for (int i = 0; i < tPD.size(); i++) {
                 for (int j = 0; j < tPD.size(); j++) {
                     if (tPD.get(i).getArrivalTime() < tPD.get(j).getArrivalTime()) {
@@ -44,7 +44,7 @@ public class AG {
                 continue;
             }
 
-            int jBest = 0; 
+            int jBest = 0;
             for (int j = 1; j < tPD.size(); j++) {
 
                 if (tPD.get(j).getArrivalTime() <= time) {
@@ -54,42 +54,39 @@ public class AG {
                     }
                 }
             }
-            int workTimeNPP = 0;
-            if (jBest == 0) {
-                workTimeNPP = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.25), cuProcess.getBurstTime());
-                pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + workTimeNPP));
-                if (workTimeNPP == cuProcess.getBurstTime()) {
-                    tPD.remove(0);
-                    continue;
-                }
-            } else {
-                int ttmp = Math.min(tPD.get(jBest).getArrivalTime() - time, cuProcess.getBurstTime());
-                workTimeNPP = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.25), ttmp);
 
-                if (ttmp == cuProcess.getBurstTime()) {
-                    pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + cuProcess.getBurstTime()));
-                    tPD.remove(0);
-                    continue;
-                }
-                pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + workTimeNPP));
-                if (workTimeNPP == ttmp) {
-                    Process tmp = new Process(cuProcess.getNumber(), cuProcess.getArrivalTime() + time + workTimeNPP,
-                            cuProcess.getBurstTime() - workTimeNPP, cuProcess.getPriority(),
-                            cuProcess.getQuantum() + (int) Math.ceil(cuProcess.getQuantum()*0.75 / 2 - ttmp / 2));
-                    tPD.add(tmp);
-                    tPD.remove(0);
-                    continue;
-                }
+            int avwt = 0;
+            if (jBest == 0) {
+                avwt = cuProcess.getBurstTime();
+            } else {
+                avwt = Math.max(tPD.get(jBest).getArrivalTime() - time, 0);
+            }
+            
+            int workTimeNPP = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.25), avwt);
+            workTimeNPP = Math.min(workTimeNPP, cuProcess.getBurstTime());
+
+            pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + workTimeNPP));
+
+            if (workTimeNPP == cuProcess.getBurstTime()) {
+                tPD.remove(0);
+                continue;
             }
 
-
-
-
-
-
+            if (workTimeNPP == avwt) {
+                Process tmp = new Process(cuProcess.getNumber(), cuProcess.getArrivalTime() + time + workTimeNPP,
+                cuProcess.getBurstTime() - workTimeNPP, cuProcess.getPriority(),
+                cuProcess.getQuantum() + (int) Math.ceil(cuProcess.getQuantum() * 0.75 / 2 - workTimeNPP / 2));
+                tPD.add(tmp);
+                tPD.remove(0);
+                continue;
+            }
             
+
             cuProcess.setBurstTime(cuProcess.getBurstTime() - workTimeNPP);
             time += workTimeNPP;
+
+
+
             int nextLeast = 0;
             for (int j = 1; j < tPD.size(); j++) {
                 // int tdiffj = tPD.get(j).getArrivalTime() - time;
@@ -100,7 +97,7 @@ public class AG {
             }
             int WorkTime;
             if (nextLeast != 0) {
-                int ttnxt = Math.max(tPD.get(nextLeast).getArrivalTime() - time,0);
+                int ttnxt = Math.max(tPD.get(nextLeast).getArrivalTime() - time, 0);
                 int ttmp = Math.min(ttnxt, cuProcess.getBurstTime());
                 if (ttmp == cuProcess.getBurstTime()) {
                     pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + ttmp));
@@ -109,13 +106,13 @@ public class AG {
                 }
                 WorkTime = Math.min((int) Math.ceil(cuProcess.getQuantum() * 0.5), ttmp);
                 pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + WorkTime));
-                
+
                 cuProcess.setBurstTime(cuProcess.getBurstTime() - WorkTime);
                 cuProcess.setArrivalTime(cuProcess.getArrivalTime() + WorkTime + time);
                 if (WorkTime == ttmp) {
                     Process tmp = new Process(cuProcess.getNumber(), cuProcess.getArrivalTime(),
                             cuProcess.getBurstTime(), cuProcess.getPriority(),
-                            cuProcess.getQuantum() + (int) Math.ceil(cuProcess.getQuantum()*0.5 - WorkTime));
+                            cuProcess.getQuantum() + (int) Math.ceil(cuProcess.getQuantum() * 0.5 - WorkTime));
                     tPD.add(tmp);
                     tPD.remove(0);
                     continue;
@@ -125,11 +122,11 @@ public class AG {
             } else {
                 WorkTime = Math.min(cuProcess.getBurstTime(), (int) Math.ceil(cuProcess.getQuantum() * 0.5));
                 pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + WorkTime));
-                if(WorkTime == cuProcess.getBurstTime()){
+                if (WorkTime == cuProcess.getBurstTime()) {
                     // pExecOrder.add(new Pair<Process, Integer>(cuProcess, time + WorkTime));
                     tPD.remove(0);
                     continue;
-                }else{
+                } else {
                     cuProcess.setBurstTime(cuProcess.getBurstTime() - WorkTime);
                     cuProcess.setArrivalTime(cuProcess.getArrivalTime() + WorkTime + time);
                     noQuantum(tPD);
